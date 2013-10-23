@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+  <CCD>
+    <resolutions>
+      <resolution>
+        <width>1360</width>
+        <height>1024</height>
+      </resolution>
+      <resolution>
+        <width>680</width>
+        <height>512</height>
+      </resolution>
+      <resolution>
+        <width>340</width>
+        <height>256</height>
+      </resolution>
+    </resolutions>
+    <image type="" path2save=""/>
+  </CCD>
+  <VsGui>
+    <serialport>COM1</serialport>
+    <wl_step>0</wl_step>
+  </VsGui>
+</settings>
