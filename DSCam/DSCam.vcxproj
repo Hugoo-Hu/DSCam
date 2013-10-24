@@ -125,7 +125,9 @@
     <None Include="res\Toolbar.bmp" />
     <None Include="res\toolbar1.bmp" />
     <None Include="res\Toolbar256.bmp" />
-    <None Include="settings.xml" />
+    <None Include="settings.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="UserImages.bmp" />
   </ItemGroup>
   <ItemGroup>

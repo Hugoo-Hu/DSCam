@@ -39,6 +39,9 @@ public:
 	double get_wl_step();
 	void set_wl_step(double wl_step);
 
+	int get_wl_cap_times();
+	void set_wl_cap_times(int times=1);
+
 
 	//DOM
 	HRESULT load();
@@ -53,5 +56,8 @@ public:
 
 	double get_wl_step_dom();
 	void set_wl_step_dom(double wl_step);
+
+	int get_wl_cap_times_dom();
+	void set_wl_cap_times_dom(int times=1);
 };
 

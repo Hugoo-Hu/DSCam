@@ -20,5 +20,6 @@
   <VsGui>
     <serialport>COM1</serialport>
     <wl_step>0</wl_step>
+    <cap_times>1</cap_times>
   </VsGui>
 </settings>

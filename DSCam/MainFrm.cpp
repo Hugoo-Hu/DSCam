@@ -154,10 +154,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 #ifdef XMLDOM
 	settings->get_image_attr_dom(theApp.m_CCD.m_path2save,theApp.m_CCD.m_image_type);
 	theApp.m_vsgui.m_wl_step=settings->get_wl_step_dom();
+	theApp.m_vsgui.m_wl_cap_times=settings->get_wl_cap_times_dom();
 	//string str=settings->get_vsport_dom();
 #else
 	settings->get_image_attr(theApp.m_CCD.m_path2save,theApp.m_CCD.m_image_type);
 	theApp.m_vsgui.m_wl_step=settings->get_wl_step();
+	theApp.m_vsgui.m_wl_cap_times=settings->get_wl_cap_times();
 #endif
 	////theApp.m_CCD.m_path2save=settings->getpath2save();
 
@@ -357,18 +359,26 @@ UINT __cdecl video_cap_func(LPVOID arg)
 	{
 		if(!g_syncflag)
 			break;
-		VsSetWavelength(theApp.m_vsgui.m_vshwnd,wl_min_cap+i*wl_step,TRUE);
-		//Sleep(200);
-		//Sleep(theApp.m_CCD.m_exposuretime*10);
-		Sleep(300);
-		cstr.Format("%d",(int)(wl_min_cap+i*wl_step));
-		filename=strpath+cstr.GetBuffer();
-		CameraCaptureFile(filename.c_str(),theApp.m_CCD.m_image_type);
-		//Sleep(theApp.m_CCD.m_exposuretime*100);
-		//Sleep(200);
-		Sleep(200);
+		for(int j=0;j!=theApp.m_vsgui.m_wl_cap_times;++j)
+		{
+			VsSetWavelength(theApp.m_vsgui.m_vshwnd,wl_min_cap+i*wl_step,TRUE);
+			//Sleep(200);
+			//Sleep(theApp.m_CCD.m_exposuretime*10);
+			Sleep(300);
+			cstr.Format("%d",(int)(wl_min_cap+i*wl_step));
+			filename=strpath+cstr.GetBuffer();
+			CameraCaptureFile(filename.c_str(),theApp.m_CCD.m_image_type);
+			//Sleep(theApp.m_CCD.m_exposuretime*100);
+			//Sleep(200);
+			Sleep(200);
+
+			if(!g_syncflag)
+				break;
+		}
 	}
 
+	if(g_syncflag)
+		VsSetWavelength(theApp.m_vsgui.m_vshwnd,theApp.m_vsgui.m_wl_curr,TRUE);
 	//Sleep(1000);
 	//MessageBox(theApp.m_pMainWnd->GetSafeHwnd(),_T("连拍结束"),_T("提示"),MB_OK);
 	//cstr.Format(_T("path = %s"),strpath.c_str());

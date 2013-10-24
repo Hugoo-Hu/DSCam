@@ -64,6 +64,7 @@ public:
 public:
 	BOOL m_isopen;
 	string m_comport;
+	int m_wl_cap_times;
 	double m_wl_curr;
 	//double m_wl_min;
 	//double m_wl_max;
