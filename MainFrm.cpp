@@ -46,6 +46,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_VIDEO_PAUSE,&CMainFrame::on_video_pause)
 	ON_COMMAND(ID_VIDEO_CAP,&CMainFrame::on_video_cap)
 	ON_COMMAND(ID_VIDEO_CAP_CONSECUTIVE,&CMainFrame::on_video_cap_consecutive)
+	ON_COMMAND(ID_VIDEO_MONO,&CMainFrame::on_video_mono)
+	ON_UPDATE_COMMAND_UI(ID_VIDEO_MONO,&CMainFrame::on_video_mono_update)
 
 
 	ON_REGISTERED_MESSAGE(WM_CCDVIDEOMSG,&CMainFrame::on_ccd_video_msg)
@@ -355,6 +357,18 @@ UINT __cdecl video_cap_func(LPVOID arg)
 	float wl_step=(float)theApp.m_vsgui.m_wl_step;
 	//DS_FILE_TYPE image_type=theApp.m_CCD.m_image_type;
 
+	VsClearPendingCommands(theApp.m_vsgui.m_vshwnd);
+	//VsSetWavelength(theApp.m_vsgui.m_vshwnd,wl_min_cap,TRUE);
+	double wl_curr=0.0f;
+
+	//do
+	//{
+	//	VsGetWavelength(theApp.m_vsgui.m_vshwnd,&wl_curr);
+	// sleep --> 2000 --> ok
+		//Sleep(2000);
+	//}
+	//while(wl_curr==wl_min_cap);
+
 	for(int i=0;wl_min_cap+i*wl_step<=theApp.m_vsgui.m_wl_max_cap;++i)
 	{
 		if(!g_syncflag)
@@ -364,13 +378,23 @@ UINT __cdecl video_cap_func(LPVOID arg)
 			VsSetWavelength(theApp.m_vsgui.m_vshwnd,wl_min_cap+i*wl_step,TRUE);
 			//Sleep(200);
 			//Sleep(theApp.m_CCD.m_exposuretime*10);
-			Sleep(300);
-			cstr.Format("%d",(int)(wl_min_cap+i*wl_step));
+			//Sleep(300);
+			Sleep(100);
+			VsGetWavelength(theApp.m_vsgui.m_vshwnd,&wl_curr);
+			if(theApp.m_vsgui.m_wl_cap_times==1)
+				//cstr.Format("%d",(int)(wl_min_cap+i*wl_step));
+				cstr.Format("%d",(int)wl_curr);
+			else
+				cstr.Format("%d_%d",(int)(wl_min_cap+i*wl_step),j+1);
 			filename=strpath+cstr.GetBuffer();
+			//0.09s --> m_exposure == 2268 (approximate)
+			Sleep(theApp.m_CCD.m_exposuretime);
 			CameraCaptureFile(filename.c_str(),theApp.m_CCD.m_image_type);
 			//Sleep(theApp.m_CCD.m_exposuretime*100);
 			//Sleep(200);
-			Sleep(200);
+			//Sleep(theApp.m_CCD.m_exposuretime);
+			Sleep(500);
+			//Sleep(200);
 
 			if(!g_syncflag)
 				break;
@@ -439,6 +463,10 @@ void CMainFrame::on_dev_open_ccd()
 		theApp.m_CCD.m_runstatus=RUNMODE_PLAY;
 		CameraSetVideoMessage(WM_CCDVIDEOMSG);
 		CameraDisplayEnable(TRUE);
+		CameraGetMonochrome(&theApp.m_CCD.m_ismono);
+
+		//CMenu *pmenu=theApp.m_pMainWnd->GetMenu();
+		//pmenu->GetSubMenu(1)->CheckMenuItem(ID_VIDEO_MONO,theApp.m_CCD.m_ismono);
 	}
 }
 
@@ -735,6 +763,8 @@ void CMainFrame::on_video_cap()
 		if(strpath.rfind('\\')!=strpath.size()-1)
 			strpath+="\\";
 		CString cstr;
+		//cstr.Format("exposure time=%d",theApp.m_CCD.m_exposuretime);
+		//MessageBox(cstr.GetBuffer());
 		cstr.Format("%d",(int)theApp.m_vsgui.m_wl_curr);
 		filename=strpath+"image_"+cstr.GetBuffer();
 		
@@ -776,5 +806,19 @@ void CMainFrame::on_video_cap_consecutive()
 		CCapProgressDlg capprogdlg;
 		capprogdlg.DoModal();
 	}
+}
+
+void CMainFrame::on_video_mono()
+{
+	if(theApp.m_CCD.m_isinit&&theApp.m_CCD.m_runstatus!=RUNMODE_STOP)
+	{
+		CameraSetMonochrome(!theApp.m_CCD.m_ismono);
+		theApp.m_CCD.m_ismono=!theApp.m_CCD.m_ismono;
+	}
+}
+
+void CMainFrame::on_video_mono_update(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetCheck(theApp.m_CCD.m_ismono);
 }
 

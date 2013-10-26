@@ -56,6 +56,8 @@ protected:
 	afx_msg void on_video_pause();
 	afx_msg void on_video_cap();
 	afx_msg void on_video_cap_consecutive();
+	afx_msg void on_video_mono();
+	afx_msg void on_video_mono_update(CCmdUI* pCmdUI);
 
 	afx_msg long on_ccd_video_msg(WPARAM wP, LPARAM lP);
 

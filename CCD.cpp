@@ -6,6 +6,7 @@ CCCD::CCCD(void)
 {
 	m_runstatus=RUNMODE_STOP;
 	m_isinit=FALSE;
+	m_ismono=FALSE;
 }
 
 

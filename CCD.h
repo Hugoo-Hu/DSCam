@@ -36,6 +36,8 @@ public:
 	DS_FRAME_SPEED m_frame_speed;
 	DS_FILE_TYPE m_image_type;
 
+	BOOL m_ismono;
+
 	int m_videocnt;
 	BOOL m_isinit;
 
