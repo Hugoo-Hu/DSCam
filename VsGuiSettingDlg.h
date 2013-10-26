@@ -20,6 +20,7 @@ protected:
 protected:
 	HICON m_hIcon;
 
+	int m_wl_cap_times;
 	double m_wl_curr;
 	double m_wl_step;
 	double m_wl_max;
@@ -42,4 +43,5 @@ public:
 	afx_msg void OnEnKillfocusEdWlMaxCap();
 	afx_msg void OnBnClickedBnWlSetCurr();
 	afx_msg void OnNMCustomdrawSdWlrange(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnEnKillfocusEdWlCapTimes();
 };

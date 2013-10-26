@@ -253,6 +253,57 @@ void Csettings::set_wl_step(double wl_step)
 	}
 }
 
+int Csettings::get_wl_cap_times()
+{
+	using boost::property_tree::ptree;
+	using std::locale;
+	std::locale loc(locale(""));
+	ptree pt;
+	int cap_times=1;
+	string strvalue(_T(""));
+
+	try
+	{
+		read_xml(m_settingxml,pt);
+		strvalue=pt.get<string>("settings.VsGui.cap_times");
+		cap_times=_tstoi(strvalue.c_str());
+		cap_times=cap_times<=0?1:cap_times;
+	}
+	catch(std::exception &e)
+	{
+		string strerr=e.what();
+		MessageBox(AfxGetApp()->GetMainWnd()->GetSafeHwnd(),strerr.c_str(),_T("´íÎó"),MB_ICONERROR);
+		cap_times=1;
+	}
+
+	return cap_times;
+}
+
+void Csettings::set_wl_cap_times(int times)
+{
+	using boost::property_tree::ptree;
+	using std::locale;
+	std::locale loc(locale(""));
+	ptree pt;
+	string strvalue(_T(""));
+
+	try
+	{
+		TCHAR buf[20];
+		memset(buf,0,20);
+		_stprintf_s(buf,20,_T("%d"),times);
+		strvalue=buf;
+		read_xml(m_settingxml,pt);
+		pt.put<string>("settings.VsGui.cap_times",strvalue);
+		write_xml(m_settingxml,pt);
+	}
+	catch(std::exception &e)
+	{
+		string strerr=e.what();
+		MessageBox(AfxGetApp()->GetMainWnd()->GetSafeHwnd(),strerr.c_str(),_T("´íÎó"),MB_ICONERROR);
+	}
+}
+
 HRESULT Csettings::load()
 {
 	HRESULT hr=S_OK;
@@ -403,4 +454,35 @@ void Csettings::set_wl_step_dom(double wl_step)
 
 	m_pxmldoc->save(m_settingxml.c_str());
 
+}
+
+int Csettings::get_wl_cap_times_dom()
+{
+	if(m_pxmldoc==NULL||!m_isloaded)
+	{
+		return 1;
+	}
+	
+	int cap_times=1;
+	MSXML2::IXMLDOMNodePtr xmlnode=m_pxmldoc->selectSingleNode(_T("settings/VsGui/cap_times"));
+	string strvalue=xmlnode->text;
+	cap_times=_tstoi(strvalue.c_str());
+	cap_times=cap_times<=0?1:cap_times;
+
+	return cap_times;
+}
+
+void Csettings::set_wl_cap_times_dom(int times)
+{
+	if(m_pxmldoc==NULL||!m_isloaded)
+	{
+		return ;
+	}
+	TCHAR buf[20];
+	memset(buf,0,20);
+	_stprintf_s(buf,20,_T("%d"),times);
+	MSXML2::IXMLDOMNodePtr xmlnode=m_pxmldoc->selectSingleNode(_T("settings/VsGui/cap_times"));
+	xmlnode->text=buf;
+
+	m_pxmldoc->save(m_settingxml.c_str());
 }

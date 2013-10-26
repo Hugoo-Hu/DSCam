@@ -21,6 +21,7 @@ CVsGuiSettingDlg::CVsGuiSettingDlg(CWnd* pParent /*=NULL*/)
 	m_wl_min=0.0F;
 	m_wl_min_cap=0.0F;
 	m_wl_max_cap=0.0F;
+	m_wl_cap_times=1;
 }
 
 CVsGuiSettingDlg::~CVsGuiSettingDlg()
@@ -42,6 +43,7 @@ BEGIN_MESSAGE_MAP(CVsGuiSettingDlg, CDialogEx)
 	ON_EN_KILLFOCUS(IDC_ED_WL_MAX_CAP, &CVsGuiSettingDlg::OnEnKillfocusEdWlMaxCap)
 	ON_BN_CLICKED(IDC_BN_WL_SET_CURR, &CVsGuiSettingDlg::OnBnClickedBnWlSetCurr)
 	ON_NOTIFY(NM_CUSTOMDRAW, IDC_SD_WLRANGE, &CVsGuiSettingDlg::OnNMCustomdrawSdWlrange)
+	ON_EN_KILLFOCUS(IDC_ED_WL_CAP_TIMES, &CVsGuiSettingDlg::OnEnKillfocusEdWlCapTimes)
 END_MESSAGE_MAP()
 
 
@@ -68,6 +70,8 @@ BOOL CVsGuiSettingDlg::OnInitDialog()
 		m_wl_max=theApp.m_vsgui.m_vsinfo.maxWl;
 		m_wl_min_cap=theApp.m_vsgui.m_wl_min_cap;
 		m_wl_max_cap=theApp.m_vsgui.m_wl_max_cap;
+		m_wl_cap_times=theApp.m_vsgui.m_wl_cap_times;
+
 		CString cstr(_T(""));
 		cstr.Format(_T("%.2lf"),wl_min);
 		SetDlgItemText(IDC_LB_WL_MIN,cstr.GetBuffer());
@@ -79,6 +83,8 @@ BOOL CVsGuiSettingDlg::OnInitDialog()
 		SetDlgItemText(IDC_ED_WL_MIN_CAP,cstr);
 		cstr.Format(_T("%.2lf"),m_wl_max_cap);
 		SetDlgItemText(IDC_ED_WL_MAX_CAP,cstr);
+		cstr.Format(_T("%d"),m_wl_cap_times);
+		SetDlgItemText(IDC_ED_WL_CAP_TIMES,cstr.GetBuffer());
 
 		CSliderCtrl *wl_slider=(CSliderCtrl *) GetDlgItem(IDC_SD_WLRANGE);
 			wl_slider->SetRange((int)(wl_min+0.5),(int)(wl_max+0.5));
@@ -309,4 +315,22 @@ void CVsGuiSettingDlg::OnNMCustomdrawSdWlrange(NMHDR *pNMHDR, LRESULT *pResult)
 	cstr.Format(_T("%.2f"),m_wl_curr);
 	SetDlgItemText(IDC_ED_WL_CURRENT,cstr.GetBuffer());
 
+}
+
+
+void CVsGuiSettingDlg::OnEnKillfocusEdWlCapTimes()
+{
+	// TODO: Add your control notification handler code here
+	CString cstr(_T(""));
+	GetDlgItemText(IDC_ED_WL_CAP_TIMES,cstr);
+
+	int times=_tstoi(cstr.GetBuffer());
+	if(times<=0)
+	{
+		MessageBox(_T("拍摄次数不能小于或等于0."),_T("错误"),MB_ICONERROR);
+		return;
+	}
+
+	m_wl_cap_times=times;
+	theApp.m_vsgui.m_wl_cap_times=times;
 }

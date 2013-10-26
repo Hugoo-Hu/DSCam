@@ -18,6 +18,7 @@ CVsGui::CVsGui(void)
 	m_wl_max_cap=0.0f;
 	m_wl_min_cap=0.0f;
 	m_wl_step=0.0f;
+	m_wl_cap_times=1;
 }
 
 
